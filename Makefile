@@ -3,6 +3,10 @@ APP = base60tok
 PREFIX ?= /usr/local
 BINDIR = $(PREFIX)/bin
 
+DATADIR = $(PREFIX)/share
+APPDIR = $(DATADIR)/applications
+ICONDIR = $(DATADIR)/icons/hicolor/scalable/apps
+
 CFLAGS = -std=c23 -Wall -Wextra -g \
 	$(shell pkg-config --cflags gtk4)
 
