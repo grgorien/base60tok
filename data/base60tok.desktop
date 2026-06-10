@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Base60Tok
+GenericName=Stopwatch
+Comment=Stupid simple GTK4 stopwatch
+Exec=base60tok
+Icon=base60tok
+Terminal=false
+Categories=Utility;GTK;
+Keywords=stopwatch;timer;time;clock;
+StartupNotify=true
