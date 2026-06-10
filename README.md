@@ -1,5 +1,7 @@
 # Base60tok
 
+<img src="data/base60tok.svg" alt="base60tok logo" width="50" height="50">
+
 Stupid simple XFCE GT4 stopwatch.
 
 ## Dependencies
