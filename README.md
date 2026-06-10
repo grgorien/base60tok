@@ -30,6 +30,16 @@ sudo make install
 
 Done.
 
+## Uninstallation Steps
+
+```bash
+make uninstall
+```
+
+## Screenshot
+
+<img src="data/gtk-box.png" alt="gtk box visual" width="250" height="150">
+
 ## Usage
 
 - Start/Stop: Space
