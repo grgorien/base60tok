@@ -8,6 +8,26 @@ typedef struct {
   gint64 elapsed_time;
   gboolean is_running;
 } Base60;
+// G_GNUC_UNUSED clear compiler warning
+static gboolean on_key_pressed(G_GNUC_UNUSED GtkEventControllerKey *controller,
+                               guint keyval, G_GNUC_UNUSED guint keycode,
+                               GdkModifierType state, gpointer user_data) {
+  Base60 *app = (Base60 *)user_data;
+
+  if (keyval == GDK_KEY_space) {
+    stopwatch_toggle(app);
+    return TRUE;
+  }
+
+  if ((keyval == GDK_KEY_C || keyval == GDK_KEY_c) &&
+      (state & GDK_SHIFT_MASK)) {
+    stopwatch_reset(app);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
 static void on_activate(GtkApplication *app, gpointer user_data) {
   Base60 *app_data = (Base60 *)user_data;
 
