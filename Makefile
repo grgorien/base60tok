@@ -7,8 +7,8 @@ DATADIR = $(PREFIX)/share
 APPDIR = $(DATADIR)/applications
 ICONDIR = $(DATADIR)/icons/hicolor/scalable/apps
 
-$DESKTOP_FILE = data/$(APP).svg
-$ICON_FILE = data/$(APP).svg
+DESKTOP_FILE = data/$(APP).desktop
+ICON_FILE = data/$(APP).svg
 
 CFLAGS = -std=c23 -Wall -Wextra -g \
 	$(shell pkg-config --cflags gtk4)
@@ -27,7 +27,7 @@ install: $(APP)
 	install -Dm644 $(ICON_FILE) $(DESTDIR)$(ICONDIR)/$(APP).svg
 
 uninstall:
-	rm -f $(DESTDIR)$(BINDIR)$(APP)
+	rm -f $(DESTDIR)$(BINDIR)/$(APP)
 	rm -f $(DESTDIR)$(APPDIR)/$(APP).desktop
 	rm -f $(DESTDIR)$(ICONDIR)/$(APP).svg
 
