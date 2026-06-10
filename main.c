@@ -8,6 +8,66 @@ typedef struct {
   gint64 elapsed_time;
   gboolean is_running;
 } Base60;
+
+static void update_label_text(Base60 *app) {
+  gint64 total_us = app->elapsed_time;
+
+  if (app->is_running) {
+    total_us += g_get_monotonic_time() - app->start_time;
+  }
+
+  gint64 total_ms = total_us / 1000;
+
+  int hours = (total_ms / 3600000);
+  int minutes = (total_ms / 60000) % 60;
+  int seconds = (total_ms / 1000) % 60;
+  int centiseconds = (total_ms / 10) % 100;
+
+  char time_string[32];
+  char markup_buffer[128];
+
+  snprintf(time_string, sizeof(time_string), "%02d:%02d:%02d.%02d", hours,
+           minutes, seconds, centiseconds);
+  snprintf(markup_buffer, sizeof(markup_buffer),
+           "<span font='28' weight='bold'>%s</span>", time_string);
+  gtk_label_set_markup(GTK_LABEL(app->label), markup_buffer);
+}
+
+static gboolean on_timeout_tick(gpointer user_data) {
+  Base60 *app = (Base60 *)user_data;
+  if (!app->is_running) {
+    return G_SOURCE_REMOVE;
+  }
+  update_label_text(app);
+  return G_SOURCE_CONTINUE;
+}
+
+static void stopwatch_toggle(Base60 *app) {
+  if (app->is_running) {
+    app->elapsed_time += g_get_monotonic_time() - app->start_time;
+    app->is_running = FALSE;
+    if (app->timer_id > 0) {
+      g_source_remove(app->timer_id);
+      app->timer_id = 0;
+    }
+  } else {
+    app->start_time = g_get_monotonic_time();
+    app->is_running = TRUE;
+    app->timer_id = g_timeout_add(10, on_timeout_tick, app);
+  }
+  update_label_text(app);
+}
+
+static void stopwatch_reset(Base60 *app) {
+  if (app->is_running) {
+    app->is_running = FALSE;
+    g_source_remove(app->timer_id);
+    app->timer_id = 0;
+  }
+  app->elapsed_time = 0;
+  update_label_text(app);
+}
+
 // G_GNUC_UNUSED clear compiler warning
 static gboolean on_key_pressed(G_GNUC_UNUSED GtkEventControllerKey *controller,
                                guint keyval, G_GNUC_UNUSED guint keycode,
