@@ -2,7 +2,7 @@
 
 # Base60tok
 
-Stupid simple XFCE GT4 stopwatch.
+Stupid simple XFCE GTK4 stopwatch.
 
 ## Dependencies
 
