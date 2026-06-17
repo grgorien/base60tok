@@ -92,7 +92,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
   Base60 *app_data = (Base60 *)user_data;
 
   GtkWidget *window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(window), "Base60 Stopwatch");
+  gtk_window_set_title(GTK_WINDOW(window), "Stopwatch");
   gtk_window_set_default_size(GTK_WINDOW(window), 250, 120);
 
   GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
@@ -126,8 +126,8 @@ int main(int argc, char **argv) {
                      .elapsed_time = 0,
                      .is_running = FALSE};
 
-  app = gtk_application_new("com.base60tok.stopwatch",
-                            G_APPLICATION_DEFAULT_FLAGS);
+  app =
+      gtk_application_new("com.tiktok.stopwatch", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(on_activate), &app_data);
 
   status = g_application_run(G_APPLICATION(app), argc, argv);
