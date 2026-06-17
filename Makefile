@@ -1,5 +1,5 @@
 CC = gcc
-APP = base60tok
+APP = tiktok
 PREFIX ?= /usr/local
 BINDIR = $(PREFIX)/bin
 
