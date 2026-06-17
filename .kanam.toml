@@ -1,0 +1,16 @@
+[kanam]
+name    = "tiktok"
+created = "2026-06-17"
+wip     = 3
+
+# -- backlog --
+
+[[backlog]]
+id      = "19682ab3"
+title   = "check how your handling memory it's not the best, plus you also have warnings"
+created = "2026-06-17"
+
+[[backlog]]
+id      = "199928d6"
+title   = "svg icon not rendering correctly, could be caching issue please fix"
+created = "2026-06-17"
