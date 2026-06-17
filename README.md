@@ -1,8 +1,8 @@
-<img src="data/base60tok.svg" alt="base60tok logo" width="50" height="50">
+<img src="data/tiktok.svg" alt="tiktok logo" width="50" height="50">
 
 # TikTok
 
-Stupid simple XFCE GTK4 stopwatch.
+Simple XFCE GTK4 stopwatch.
 
 ## Dependencies
 
@@ -17,7 +17,7 @@ git clone https://github.com/grgorien/tiktok
 ```
 
 ```bash
-cd base60tok
+cd tiktok
 ```
 
 ```bash
