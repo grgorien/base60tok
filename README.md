@@ -1,6 +1,6 @@
 <img src="data/base60tok.svg" alt="base60tok logo" width="50" height="50">
 
-# Base60tok
+# TikTok
 
 Stupid simple XFCE GTK4 stopwatch.
 
@@ -13,7 +13,7 @@ sudo apt install build-essential pkg-config libgtk-4-dev
 ## Installation Steps
 
 ```bash
-git clone https://github.com/grgorien/base60tok
+git clone https://github.com/grgorien/tiktok
 ```
 
 ```bash
