@@ -42,29 +42,41 @@ static gboolean on_timeout_tick(gpointer user_data) {
   return G_SOURCE_CONTINUE;
 }
 
+static void stopwatch_stop(Base60 *app) {
+  if (app->timer_id > 0) {
+    g_source_remove(app->timer_id);
+    app->timer_id = 0;
+  }
+  app->elapsed_time += g_get_monotonic_time() - app->start_time;
+  app->is_running = FALSE;
+}
+
+static gboolean stopwatch_start(Base60 *app) {
+  if (app->is_running) {
+    return FALSE;
+  }
+  app->start_time = g_get_monotonic_time();
+  app->timer_id = g_timeout_add(10, on_timeout_tick, app);
+  if (app->timer_id == 0) {
+    return FALSE;
+  }
+  app->is_running = TRUE;
+  return TRUE;
+}
+
 static void stopwatch_toggle(Base60 *app) {
   if (app->is_running) {
-    app->elapsed_time += g_get_monotonic_time() - app->start_time;
-    app->is_running = FALSE;
-    if (app->timer_id > 0) {
-      g_source_remove(app->timer_id);
-      app->timer_id = 0;
-    }
+    stopwatch_stop(app);
   } else {
-    app->start_time = g_get_monotonic_time();
-    app->is_running = TRUE;
-    app->timer_id = g_timeout_add(10, on_timeout_tick, app);
+    stopwatch_start(app);
   }
   update_label_text(app);
 }
 
 static void stopwatch_reset(Base60 *app) {
-  if (app->is_running) {
-    app->is_running = FALSE;
-    g_source_remove(app->timer_id);
-    app->timer_id = 0;
-  }
+  stopwatch_stop(app);
   app->elapsed_time = 0;
+  app->is_running = FALSE;
   update_label_text(app);
 }
 
