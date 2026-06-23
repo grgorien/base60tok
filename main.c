@@ -3,11 +3,20 @@
 
 typedef struct {
   GtkWidget *label;
+  GtkWidget *progress_bar;
   guint timer_id;
   gint64 start_time;
   gint64 elapsed_time;
   gboolean is_running;
 } Base60;
+
+static gint64 get_total_elapsed_ms(Base60 *app) {
+  gint64 total = app->elapsed_time;
+  if (app->is_running) {
+    total += g_get_monotonic_time() - app->start_time;
+  }
+  return total;
+}
 
 static void update_label_text(Base60 *app) {
   gint64 total_us = app->elapsed_time;
