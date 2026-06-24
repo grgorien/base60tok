@@ -54,7 +54,7 @@ jobs:
           tar -czf "$PKGDIR.tar.gz" "$PKGDIR"
 
       - name: Release create and tarball attach
-        uses: softprops/action-gh-release@v2
+        uses: ncipollo/release-action@v1
         with:
           name: "tiktok ${{ steps.version.outputs.ver }}"
           generate_release_notes: true
