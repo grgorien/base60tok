@@ -6,11 +6,22 @@ wip     = 3
 # -- backlog --
 
 [[backlog]]
-id      = "19682ab3"
-title   = "check how your handling memory it's not the best, plus you also have warnings"
-created = "2026-06-17"
+id      = "3dbe6346"
+title   = "drawing queue semi works, go and fix smoothness instead of this tacky progression while it's interesting it feels odd bad ux."
+created = "2026-06-23"
 
-[[backlog]]
+# -- done --
+
+[[done]]
 id      = "199928d6"
 title   = "svg icon not rendering correctly, could be caching issue please fix"
 created = "2026-06-17"
+started    = "2026-06-23"
+finished   = "2026-06-23"
+
+[[done]]
+id      = "19682ab3"
+title   = "check how your handling memory it's not the best, plus you also have warnings"
+created = "2026-06-17"
+started    = "2026-06-23"
+finished   = "2026-06-23"
