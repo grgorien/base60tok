@@ -42,7 +42,7 @@ static void draw_progress(GtkDrawingArea *area, cairo_t *cr, int width,
   (void)area; // compiler supression
   Base60 *app = (Base60 *)user_data;
   gint64 total_ms = get_total_elapsed_ms(app) / 1000;
-  gint64 ms_in_minute = total_ms & 60000;
+  gint64 ms_in_minute = total_ms % 60000;
   double fraction = (double)ms_in_minute / 60000.0; // i.e 0.0 to 0.1
   cairo_set_source_rgb(cr, 0.12, 0.12, 0.14);       // #0c0c0e
   cairo_rectangle(cr, 0, 0, width, height);
@@ -160,7 +160,7 @@ static void on_activate(GtkApplication *gapp, gpointer user_data) {
                                  draw_progress, app, NULL);
   gtk_box_append(GTK_BOX(outer_box), app->progress_bar);
 
-  GtkWidget *inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15); // or 12
+  GtkWidget *inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12); // or 12
   gtk_widget_set_halign(inner_box, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(inner_box, GTK_ALIGN_CENTER);
   gtk_widget_set_vexpand(inner_box, TRUE);
