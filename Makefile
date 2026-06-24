@@ -44,6 +44,7 @@ install: release
 	strip $(DESTDIR)$(BINDIR)/$(APP)
 	install -Dm644 data/$(APP).desktop $(DESTDIR)$(APPDIR)/$(APP).desktop
 	install -Dm644 data/$(APP).svg $(DESTDIR)$(ICONDIR)/$(APP).svg
+	@gtk-update-icon-cache -f -t $(DESTDIR)$(DATADIR)/icons/hicolor/ 2>/dev/null || true
 	@echo "status: installed $(APP) $(VERSION) to $(DESTDIR)$(PREFIX)."
 
 uninstall:
