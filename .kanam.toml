@@ -6,11 +6,37 @@ wip     = 3
 # -- backlog --
 
 [[backlog]]
-id      = "19682ab3"
-title   = "check how your handling memory it's not the best, plus you also have warnings"
-created = "2026-06-17"
+id      = "57919e3a"
+title   = "go and change base60 struct to something more general and fitting"
+created = "2026-06-24"
 
-[[backlog]]
+# -- done --
+
+[[done]]
+id      = "44004e99"
+title   = "release build package reduce debug symbols"
+created = "2026-06-23"
+started    = "2026-06-23"
+finished   = "2026-06-24"
+cycle_days = 1
+
+[[done]]
+id      = "3dbe6346"
+title   = "drawing queue semi works, go and fix smoothness instead of this tacky progression while it's interesting it feels odd bad ux."
+created = "2026-06-23"
+started    = "2026-06-23"
+finished   = "2026-06-23"
+
+[[done]]
 id      = "199928d6"
 title   = "svg icon not rendering correctly, could be caching issue please fix"
 created = "2026-06-17"
+started    = "2026-06-23"
+finished   = "2026-06-23"
+
+[[done]]
+id      = "19682ab3"
+title   = "check how your handling memory it's not the best, plus you also have warnings"
+created = "2026-06-17"
+started    = "2026-06-23"
+finished   = "2026-06-23"

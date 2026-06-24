@@ -2,45 +2,94 @@
 
 # TikTok
 
-Simple XFCE GTK4 stopwatch.
+Minimal GTK4 stopwatch for XFCE and other Linux desktops.  
+Tracks time with centisecond precision. Lives in your taskbar, stays out of your way.
 
-## Dependencies
+<img src="data/gtk-box.png" alt="tiktok visual preview screenshot" width="250">
+
+## Keybinds
+
+| Key | Action |
+|-----|--------|
+| `Space` | Start / Stop |
+| `Shift+C` | Reset |
+
+---
+
+## Install a release (no compiler needed)
+
+Download the latest tarball from the [Releases](../../releases/latest) page.
+
+```bash
+tar -xzf tiktok-*-linux-x86_64.tar.gz
+cd tiktok-*-linux-x86_64
+sudo ./install.sh
+```
+
+To remove it:
+
+```bash
+sudo rm /usr/local/bin/tiktok
+sudo rm /usr/local/share/applications/tiktok.desktop
+sudo rm /usr/local/share/icons/hicolor/scalable/apps/tiktok.svg
+```
+
+---
+
+## Build from source
+
+### Dependencies
+
+**Debian / Ubuntu / Mint / Pop!_OS**
 
 ```bash
 sudo apt install build-essential pkg-config libgtk-4-dev
 ```
 
-## Installation Steps
+**Fedora / RHEL**
+
+```bash
+sudo dnf install gcc make pkg-config gtk4-devel
+```
+
+**Arch**
+
+```bash
+sudo pacman -S base-devel pkg-config gtk4
+```
+
+### Build and install
 
 ```bash
 git clone https://github.com/grgorien/tiktok
-```
-
-```bash
 cd tiktok
-```
-
-```bash
-make
-```
-
-```bash
+make release
 sudo make install
 ```
 
-Done.
-
-## Uninstallation Steps
+Verify it worked:
 
 ```bash
-make uninstall
+tiktok --version
 ```
 
-## Screenshot
+### Uninstall
 
-<img src="data/gtk-box.png" alt="gtk box visual" width="250" height="150">
+```bash
+sudo make uninstall
+```
 
-## Usage
+---
 
-- Start/Stop: Space
-- Clear: (Shift + C)
+## Development
+
+```bash
+make          # debug build with -g -O0 (runs as ./tiktok)
+make debug    # same as above, explicit
+make release  # optimised build with -O2 (runs as ./tiktok)
+make clean    # remove build artefacts
+```
+
+The default `make` produces a debug binary in the project directory, nothing is installed to your system. Use `sudo make install` when you want the binary available system-wide.
+
+GTK4 is required. This will not build or run on GTK3.
