@@ -35,8 +35,6 @@ static void update_label_text(Base60 *app) {
   gtk_label_set_markup(GTK_LABEL(app->label), markup_buffer);
 }
 
-// repaints (don't store/no need for freeing) testing on usage for this blank
-// widget
 static void draw_progress(GtkDrawingArea *area, cairo_t *cr, int width,
                           int height, gpointer user_data) {
   (void)area; // compiler supression
@@ -53,7 +51,6 @@ static void draw_progress(GtkDrawingArea *area, cairo_t *cr, int width,
   cairo_fill(cr);
 }
 
-// this one can move if we must
 static gboolean on_timeout_tick(gpointer user_data) {
   Base60 *app = (Base60 *)user_data;
   if (!app->is_running) {
@@ -160,7 +157,7 @@ static void on_activate(GtkApplication *gapp, gpointer user_data) {
                                  draw_progress, app, NULL);
   gtk_box_append(GTK_BOX(outer_box), app->progress_bar);
 
-  GtkWidget *inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12); // or 12
+  GtkWidget *inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
   gtk_widget_set_halign(inner_box, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(inner_box, GTK_ALIGN_CENTER);
   gtk_widget_set_vexpand(inner_box, TRUE);
