@@ -182,8 +182,11 @@ static void on_activate(GtkApplication *gapp, gpointer user_data) {
 }
 
 int main(int argc, char **argv) {
-  // could have better name don't want to change for future, better to be
-  // general *todo
+  if (argc > 1 && strcmp(argv[1], "--version") == 0) {
+    printf("tiktok %s\n", APP_VERSION);
+    return 0;
+  }
+  // change name to general, make kanam job
   Base60 app_data = {.label = NULL,
                      .progress_bar = NULL,
                      .timer_id = 0,
