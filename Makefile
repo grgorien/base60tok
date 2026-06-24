@@ -14,7 +14,7 @@ OBJS = $(SRCS:.c=.o)
 
 GTK_CFLAGS := $(shell pkg-config --cflags gtk4)
 GTK_LIBS := $(shell pkg-config --libs gtk4)
-CFLAGS_COMMON = -std=c23 -Wall -Wextra -DAPP_VERSION=\"$(VERSION)\" $(GTK_CFLAGS)
+CFLAGS_COMMON = -std=c2x -Wall -Wextra -DAPP_VERSION=\"$(VERSION)\" $(GTK_CFLAGS)
 CFLAGS_DEBUG = $(CFLAGS_COMMON) -g -O0
 CFLAGS_REL = $(CFLAGS_COMMON) -O2 -DNDEBUG
 CFLAGS = $(CFLAGS_DEBUG) 
