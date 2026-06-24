@@ -17,7 +17,7 @@ GTK_LIBS := $(shell pkg-config --libs gtk4)
 CFLAGS_COMMON = -std=c23 -Wall -Wextra -DAPP_VERSION=\"$(VERSION)\" $(GTK_CFLAGS)
 CFLAGS_DEBUG = $(CFLAGS_COMMON) -g -O0
 CFLAGS_REL = $(CFLAGS_COMMON) -O2 -DNDEBUG
-CFLAGS = $(CFLAGS_DEBUG) # default to debug else leverage release
+CFLAGS = $(CFLAGS_DEBUG) 
 # pkg-config covers this from gtk libs
 LDFLAGS =
 LDLIBS = $(GTK_LIBS)
