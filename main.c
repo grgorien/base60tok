@@ -19,14 +19,7 @@ static gint64 get_total_elapsed_ms(Base60 *app) {
 }
 
 static void update_label_text(Base60 *app) {
-  gint64 total_us = app->elapsed_time;
-
-  if (app->is_running) {
-    total_us += g_get_monotonic_time() - app->start_time;
-  }
-
-  gint64 total_ms = total_us / 1000;
-
+  gint64 total_ms = get_total_elapsed_ms(app) / 1000;
   int hours = (total_ms / 3600000);
   int minutes = (total_ms / 60000) % 60;
   int seconds = (total_ms / 1000) % 60;
@@ -42,12 +35,32 @@ static void update_label_text(Base60 *app) {
   gtk_label_set_markup(GTK_LABEL(app->label), markup_buffer);
 }
 
+// repaints (don't store/no need for freeing) testing on usage for this blank
+// widget
+static void draw_progress(GtkDrawingArea *area, cairo_t *cr, int width,
+                          int height, gpointer user_data) {
+  (void)area; // compiler supression
+  Base60 *app = (Base60 *)user_data;
+  gint64 total_ms = get_total_elapsed_ms(app) / 1000;
+  gint64 ms_in_minute = total_ms & 60000;
+  double fraction = (double)ms_in_minute / 60000.0; // i.e 0.0 to 0.1
+  cairo_set_source_rgb(cr, 0.12, 0.12, 0.14);       // #0c0c0e
+  cairo_rectangle(cr, 0, 0, width, height);
+  cairo_fill(cr);
+
+  cairo_set_source_rgb(cr, 0.18, 0.58, 0.82); // #123952
+  cairo_rectangle(cr, 0, 0, (int)(width * fraction), height);
+  cairo_fill(cr);
+}
+
+// this one can move if we must
 static gboolean on_timeout_tick(gpointer user_data) {
   Base60 *app = (Base60 *)user_data;
   if (!app->is_running) {
     return G_SOURCE_REMOVE;
   }
   update_label_text(app);
+  gtk_widget_queue_draw(app->progress_bar);
   return G_SOURCE_CONTINUE;
 }
 
@@ -65,7 +78,7 @@ static gboolean stopwatch_start(Base60 *app) {
     return FALSE;
   }
   app->start_time = g_get_monotonic_time();
-  app->timer_id = g_timeout_add(10, on_timeout_tick, app);
+  app->timer_id = g_timeout_add(10, (GSourceFunc)on_timeout_tick, app);
   if (app->timer_id == 0) {
     return FALSE;
   }
@@ -80,6 +93,7 @@ static void stopwatch_toggle(Base60 *app) {
     stopwatch_start(app);
   }
   update_label_text(app);
+  gtk_widget_queue_draw(app->progress_bar);
 }
 
 static void stopwatch_reset(Base60 *app) {
@@ -87,6 +101,7 @@ static void stopwatch_reset(Base60 *app) {
   app->elapsed_time = 0;
   app->is_running = FALSE;
   update_label_text(app);
+  gtk_widget_queue_draw(app->progress_bar);
 }
 
 // G_GNUC_UNUSED clear compiler warning
@@ -109,50 +124,81 @@ static gboolean on_key_pressed(G_GNUC_UNUSED GtkEventControllerKey *controller,
   return FALSE;
 }
 
-static void on_activate(GtkApplication *app, gpointer user_data) {
-  Base60 *app_data = (Base60 *)user_data;
+static void load_css(void) {
+  GtkCssProvider *provider = gtk_css_provider_new();
+  gtk_css_provider_load_from_string(provider, "window {"
+                                              " background-color: #1a1a1e;"
+                                              "}"
+                                              "label {"
+                                              " color: #e8e8ec;"
+                                              "}"
+                                              "#help-label {"
+                                              " color: #5a5a6a;"
+                                              " font-size: 12px;"
+                                              "}");
 
-  GtkWidget *window = gtk_application_window_new(app);
+  gtk_style_context_add_provider_for_display(
+      gdk_display_get_default(), GTK_STYLE_PROVIDER(provider),
+      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_object_unref(provider);
+}
+
+static void on_activate(GtkApplication *gapp, gpointer user_data) {
+  Base60 *app = (Base60 *)user_data;
+  load_css();
+
+  GtkWidget *window = gtk_application_window_new(gapp);
   gtk_window_set_title(GTK_WINDOW(window), "Stopwatch");
   gtk_window_set_default_size(GTK_WINDOW(window), 250, 120);
+  gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
-  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
-  gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
-  gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
-  gtk_window_set_child(GTK_WINDOW(window), box);
+  GtkWidget *outer_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-  app_data->label = gtk_label_new(NULL);
-  gtk_label_set_markup(GTK_LABEL(app_data->label),
+  app->progress_bar = gtk_drawing_area_new();
+  gtk_widget_set_size_request(app->progress_bar, -1, 5);
+  gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(app->progress_bar),
+                                 draw_progress, app, NULL);
+  gtk_box_append(GTK_BOX(outer_box), app->progress_bar);
+
+  GtkWidget *inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15); // or 12
+  gtk_widget_set_halign(inner_box, GTK_ALIGN_CENTER);
+  gtk_widget_set_valign(inner_box, GTK_ALIGN_CENTER);
+  gtk_widget_set_vexpand(inner_box, TRUE);
+
+  app->label = gtk_label_new(NULL);
+  gtk_label_set_markup(GTK_LABEL(app->label),
                        "<span font='28' weight='bold'>00:00:00.00</span>");
-  gtk_box_append(GTK_BOX(box), app_data->label);
+  gtk_box_append(GTK_BOX(inner_box), app->label);
 
-  GtkWidget *help_label = gtk_label_new("[Space] Start/Stop • [Shift+C] Reset");
-  gtk_box_append(GTK_BOX(box), help_label);
+  GtkWidget *help_label = gtk_label_new("[Space] Start/Stop | [Shift+C] Reset");
+  gtk_widget_set_name(help_label, "help_label");
+  gtk_box_append(GTK_BOX(inner_box), help_label);
+
+  gtk_box_append(GTK_BOX(outer_box), inner_box);
+  gtk_window_set_child(GTK_WINDOW(window), outer_box);
 
   GtkEventController *controller = gtk_event_controller_key_new();
-  g_signal_connect(controller, "key-pressed", G_CALLBACK(on_key_pressed),
-                   app_data);
+  g_signal_connect(controller, "key-pressed", G_CALLBACK(on_key_pressed), app);
   gtk_widget_add_controller(window, controller);
 
   gtk_window_present(GTK_WINDOW(window));
 }
 
 int main(int argc, char **argv) {
-  GtkApplication *app;
-  int status;
-
+  // could have better name don't want to change for future, better to be
+  // general *todo
   Base60 app_data = {.label = NULL,
+                     .progress_bar = NULL,
                      .timer_id = 0,
                      .start_time = 0,
                      .elapsed_time = 0,
                      .is_running = FALSE};
 
-  app =
+  GtkApplication *app =
       gtk_application_new("com.tiktok.stopwatch", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(on_activate), &app_data);
 
-  status = g_application_run(G_APPLICATION(app), argc, argv);
+  int status = g_application_run(G_APPLICATION(app), argc, argv);
   g_object_unref(app);
-
   return status;
 }
