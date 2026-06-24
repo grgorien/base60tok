@@ -1,0 +1,58 @@
+name: Tiktok Release Steps
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build and release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GTK4
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev
+
+      - name: Build relase binary
+        run: make release
+
+      - name: Set version and strip v
+        id: version
+        run: echo "ver=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Package up
+        run: |
+          PKGDIR=tiktok-${{ steps.version.outputs.ver }}-linux-x86_64
+          mkdir -p "$PKGDIR"
+          cp tiktok "$PKGDIR/"
+          cp data/tiktok.desktop "$PKGDIR/"
+          cp data/tiktok.svg "$PKGDIR/"
+
+          # install script for non-developer users
+          cat > "$PKGDIR/install.sh" << 'EOF'
+          #!/bin/sh
+          set -e
+          BINDIR="${PREFIX:-/usr/local}/bin"
+          APPDIR="${PREFIX:-/usr/local}/share/applications"
+          ICONDIR="${PREFIX:-/usr/local}/share/icons/hicolor/scalable/apps"
+          install -Dm755 tiktok            "$BINDIR/tiktok"
+          install -Dm644 tiktok.desktop    "$APPDIR/tiktok.desktop"
+          install -Dm644 tiktok.svg        "$ICONDIR/tiktok.svg"
+          echo "status: installed.\n Run 'tiktok' or find it in your app menu."
+          EOF
+          chmod +x "$PKGDIR/install.sh"
+
+          tar -czf "$PKGDIR.tar.gz" "$PKGDIR"
+
+      - name: Release create and tarball attach
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "tiktok ${{ steps.version.outputs.ver }}"
+          generate_release_notes: true
+          files: tiktok-${{ steps.version.outputs.ver }}-linux-x86_64.tar.gz
