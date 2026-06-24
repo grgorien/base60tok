@@ -3,14 +3,14 @@ name    = "tiktok"
 created = "2026-06-17"
 wip     = 3
 
-# -- backlog --
+# -- done --
 
-[[backlog]]
+[[done]]
 id      = "3dbe6346"
 title   = "drawing queue semi works, go and fix smoothness instead of this tacky progression while it's interesting it feels odd bad ux."
 created = "2026-06-23"
-
-# -- done --
+started    = "2026-06-23"
+finished   = "2026-06-23"
 
 [[done]]
 id      = "199928d6"
