@@ -10,15 +10,15 @@ id      = "57919e3a"
 title   = "go and change base60 struct to something more general and fitting"
 created = "2026-06-24"
 
-# -- doing --
+# -- done --
 
-[[doing]]
+[[done]]
 id      = "44004e99"
 title   = "release build package reduce debug symbols"
 created = "2026-06-23"
 started    = "2026-06-23"
-
-# -- done --
+finished   = "2026-06-24"
+cycle_days = 1
 
 [[done]]
 id      = "3dbe6346"
